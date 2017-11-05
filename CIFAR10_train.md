@@ -9,14 +9,14 @@ import numpy as np
 import random
 import mxnet as mx
 from netlib import *
-ctx = mx.gpu(0)
+ctx = mx.gpu(1)
 ```
 
-```{.python .input  n=2}
+```{.python .input  n=6}
 """
 data loader
 """
-data_dir = "../../../gluon-tutorials-zh/data/kaggle_cifar10/train_valid_test/"
+data_dir = "/root/Workspace/data/CIFAR10_kaggle/train_valid_test/"
 
 def _transform_test(data, label):
     im = data.astype('float32') / 255
@@ -365,12 +365,14 @@ for model_name in model_list[7:]:
         save_model_result(model_name, ctx)
 ```
 
-```{.python .input  n=19}
+```{.python .input  n=11}
 """
 classfiy test set
 """
 import numpy as np
 import pandas as pd
+
+train_data, valid_data, train_valid_data, test_data, test_ds, train_valid_ds = data_loader(128, transform_train_DA1)
 
 def mesuare_sum(preds, weight_list=None):
     if weight_list is None:
@@ -378,6 +380,15 @@ def mesuare_sum(preds, weight_list=None):
     output = preds[0] * weight_list[0]
     for i in range(1, len(preds)):
         output = output + preds[i] * weight_list[i]
+    preds = output.argmax(axis=1).astype(int).asnumpy() % 10
+    return preds
+
+def mesuare_softmax_sum(preds, weight_list=None):
+    if weight_list is None:
+        weight_list = [1] * len(preds)
+    output = nd.softmax(preds[0], axis=1) * weight_list[0]
+    for i in range(1, len(preds)):
+        output = output + nd.softmax(preds[i], axis=1) * weight_list[i]
     preds = output.argmax(axis=1).astype(int).asnumpy() % 10
     return preds
 
@@ -392,22 +403,20 @@ def mesuare_biggest(preds, weight_list=None):
 model_list = ['res164__2_e255_focal_clip_all_data', 'resnet164_e300', 'resnet164_e0-255_focal_clip',
               'shelock_densenet_orign', 'shelock_resnet_orign']
 weight_list = [0.9540, 0.95270, 0.95, 0.9539, 0.95]
+#weight_list=None
 
 preds = []
 for result_name in model_list:
     preds.append(nd.load("result/"+result_name)[0].as_in_context(ctx))
 
 #preds = mesuare_biggest(preds, weight_list)
-preds = mesuare_sum(preds, weight_list)
+#preds = mesuare_sum(preds, weight_list)
+preds = mesuare_softmax_sum(preds, weight_list)
 
 sorted_ids = list(range(1, 300000 + 1))
 sorted_ids.sort(key=lambda x: str(x))
 
 df = pd.DataFrame({'id': sorted_ids, 'label': preds})
 df['label'] = df['label'].apply(lambda x: train_valid_ds.synsets[x])
-df.to_csv('submission/concat_5_sum.csv', index=False)
-```
-
-```{.python .input}
-
+df.to_csv('submission/concat_5_softmax_sum_weight.csv', index=False)
 ```
