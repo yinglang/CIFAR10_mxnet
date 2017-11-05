@@ -16,9 +16,8 @@ CIFAR10_train | main train and exp code
 plot | the visulization  of train acc and valid acc and loss with epoch
 netlib.py | ResNet18, ResNet164_v2, densenet, Focal Loss implement code by gluon, invoke by CIFAR10_train
 utils.py | some tool function
+link: https://pan.baidu.com/s/1pLjzQWj key: f6p3
 
-
-使用mxnet编写的kaggle CIFAR10比赛的代码
 ### 目录文件描述
 
 文件名 | 描述
@@ -37,7 +36,7 @@ models、result、log等内容加起来有点大，等传到网盘上，供各�
 
 ### 方法描述
 参考[论坛](https://discuss.gluon.ai/t/topic/1545/423)几个小伙伴的方法，我总结了一下，大致如下:
-1. 使用不同的网络的数据增强的方法，我们做了多个实验，得到了多个网络模型(全部放到了models下面)，然后ensemble，发现下面5个网络的效果最好。</br>
+使用不同的网络的数据增强的方法，我们做了多个实验，得到了多个网络模型(全部放到了models下面)，然后ensemble，发现下面5个网络的效果最好。</br>
 这5个网络的训练策略和单独提交的精度分别是：
 
 policy | kaggle 精度
@@ -54,5 +53,3 @@ DA2是先resize到一定的大小，然后crop的方法，同时设置了HSI的�
 DA3时在DA2后，将图片的颜色clip导（0,1）之间（动机时创建更符合人感官的自然图片数据）
 
 五个网络按照各自的精度加权求和作为最后的结果，就有了0.9688的效果。
-
-根据各位大佬们的想法，做的一些小实验，一点小小的总结，希望能帮其他几位坛友提供新idea
