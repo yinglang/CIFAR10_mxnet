@@ -1,5 +1,5 @@
-models/
-result/
-log/
-submission/
-v1/
+models/*
+result/*
+log/*
+submission/*
+v1/*
