@@ -33,6 +33,7 @@ netlib.py | ResNet18, ResNet164_v2, densenet, Focal Loss 的gluon的实现,被�
 utils.py | 一些工具函数
 
 models、result、log等内容加起来有点大，等传到网盘上，供各位小伙伴参考下载。
+链接: https://pan.baidu.com/s/1pLjzQWj 密码: f6p3
 
 ### 方法描述
 参考[论坛](https://discuss.gluon.ai/t/topic/1545/423)几个小伙伴的方法，我总结了一下，大致如下:
