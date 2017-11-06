@@ -16,7 +16,33 @@ CIFAR10_train | main train and exp code
 plot | the visulization  of train acc and valid acc and loss with epoch
 netlib.py | ResNet18, ResNet164_v2, densenet, Focal Loss implement code by gluon, invoke by CIFAR10_train
 utils.py | some tool function
-link: https://pan.baidu.com/s/1pLjzQWj key: f6p3
+
+models, reuslt, log can get from link: https://pan.baidu.com/s/1pLjzQWj key: f6p3
+
+### method description
+
+the main idea is from [mxnet topic]((https://discuss.gluon.ai/t/topic/1545/423)),we merge the most ideas.</br>
+first, we train ResNet164_v2 in diffrent data argument policy</br>
+sencondly, we use 'focal loss' replace 'softmax cross entropy loss'</br>
+thirdly, we use densenet replace ResNet164_v2</br>
+lastly, we ensemble some net to get higher acc, we found this five models get best score:</br>
+
+policy | kaggle score
+--- | ---
+res164_v2 + DA1| 0.9529
+res164_v2 + DA2| 0.9527
+res164_v2 + focal loss + DA3| 0.9540
+res164_v2 + focal loss + DA3(only use 90% train_data) | 0.9506
+[sherlock_densenet](https://discuss.gluon.ai/t/topic/1545/273)| 0.9539
+
+DA1~DA3 is means diffrent data argument
+DA  | policy
+--- | ---
+DA1 | padding image to 40, and then random crop (32, 32)，same as code in sherlock
+DA2 | resize image to a bigger size，and then crop to (32, 32)，and set data argument parma of HSI to 0.3,PCA noise to 0.01.
+DA3 | after DA2, clip the color of image to (0,1)（make the generate image more friendly to human）
+
+we ensemble the five net, and got 0.9688 score.
 
 ### 目录文件描述
 
@@ -47,9 +73,11 @@ res164_v2 + focal loss + DA3| 0.9540
 res164_v2 + focal loss + DA3 | 只使用train_data训练: 0.9506
 [sherlock_densenet](https://discuss.gluon.ai/t/topic/1545/273)| 0.9539
 
-上面的DA是3中不同的数据增强的方法，
-DA1就是最常用的那种padding到40,然后crop的方法，就是sherlock代码里使用的加强
-DA2是先resize到一定的大小，然后crop的方法，同时设置了HSI的几个参数为0.3,PCA噪声为0.01
-DA3时在DA2后，将图片的颜色clip导（0,1）之间（动机时创建更符合人感官的自然图片数据）
+上面的DA是3中不同的数据增强的方法:
+DA  | policy
+--- | ---
+DA1 | 就是最常用的那种padding到40,然后crop的方法，就是sherlock代码里使用的加强
+DA2 | 是先resize到一定的大小，然后crop的方法，同时设置了HSI的几个参数为0.3,PCA噪声为0.01
+DA3 | 时在DA2后，将图片的颜色clip导（0,1）之间（动机时创建更符合人感官的自然图片数据）
 
 五个网络按照各自的精度加权求和作为最后的结果，就有了0.9688的效果。
