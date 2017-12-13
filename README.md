@@ -36,6 +36,7 @@ res164_v2 + focal loss + DA3(only use 90% train_data) | 0.9506
 [sherlock_densenet](https://discuss.gluon.ai/t/topic/1545/273)| 0.9539
 
 DA1~DA3 is means diffrent data argument
+
 DA  | policy
 --- | ---
 DA1 | padding image to 40, and then random crop (32, 32)，same as code in sherlock
