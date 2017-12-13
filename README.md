@@ -75,6 +75,7 @@ res164_v2 + focal loss + DA3 | 只使用train_data训练: 0.9506
 [sherlock_densenet](https://discuss.gluon.ai/t/topic/1545/273)| 0.9539
 
 上面的DA是3中不同的数据增强的方法:
+
 DA  | policy
 --- | ---
 DA1 | 就是最常用的那种padding到40,然后crop的方法，就是sherlock代码里使用的加强
