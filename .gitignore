@@ -1,3 +1,5 @@
 models/
 log/
 result/
+.ipynb_checkpoints
+
