@@ -2,20 +2,20 @@
 ### abstract
 kaggle CIFAR10 compitition code, implement by mxnet gluon.</br>
 we got 0.9688 by merge some ideas from https://discuss.gluon.ai/t/topic/1545/423</br>
-![](submission.png)
+![](_image/submission.png)
 
 ### directroy and file descriptor
 
 file | descriptor
 --- | ---
 log | some train log file
-models | some trianed model
+models | some trianed model params(weight)
 result | the forward result file on kaggle test set
 submission | the finnal kaggle submission result
 CIFAR10_train | main train and exp code
 plot | the visulization  of train acc and valid acc and loss with epoch
-netlib.py | ResNet18, ResNet164_v2, densenet, Focal Loss implement code by gluon, invoke by CIFAR10_train
-utils.py | some tool function
+utils/netlib.py | ResNet18, ResNet164_v2, densenet, Focal Loss implement code by gluon, invoke by CIFAR10_train
+utils/utils.py | some tool function
 
 models, reuslt, log can get from link: https://pan.baidu.com/s/1pLjzQWj key: f6p3
 
@@ -50,13 +50,13 @@ we ensemble the five net, and got 0.9688 score.
 文件名 | 描述
 --- | ---
 log | 一些训练的日志，主要是训练的loss和acc
-models | 一些训练的模型
+models | 一些训练的模型参数(权值)
 result | 程序forward的最终结果，保留了10个类别的output
 submission | 最终提交的结果文件
 CIFAR10_train | CIFAR10上训练模型和产生结果的代码，主程序。
 plot | 绘制一些模型训练过程的精度和loss曲线
-netlib.py | ResNet18, ResNet164_v2, densenet, Focal Loss 的gluon的实现,被调用。
-utils.py | 一些工具函数
+utils/netlib.py | ResNet18, ResNet164_v2, densenet, Focal Loss 的gluon的实现,被调用。
+utils/utils.py | 一些工具函数
 
 models、result、log等内容加起来有点大，等传到网盘上，供各位小伙伴参考下载。
 链接: https://pan.baidu.com/s/1pLjzQWj 密码: f6p3
