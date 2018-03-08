@@ -36,12 +36,13 @@ def show_images(images, labels=None, rgb_mean=np.array([0, 0, 0]), std=np.array(
     h, w = images.shape[1], images.shape[2]
     for i in range(M):
         for j in range(N):
+            fig = figs[i][j] if M > 1 else figs[j]
             if N * i + j < images.shape[0]:
                 image = (images[N * i + j] / 255).clip(0, 1)
-                figs[i][j].imshow(image)
+                fig.imshow(image)
                 
-                figs[i][j].axes.get_xaxis().set_visible(False)
-                figs[i][j].axes.get_yaxis().set_visible(False)
+                fig.axes.get_xaxis().set_visible(False)
+                fig.axes.get_yaxis().set_visible(False)
                 
                 if labels is not None:
                     label = labels[N * i + j]
@@ -49,12 +50,12 @@ def show_images(images, labels=None, rgb_mean=np.array([0, 0, 0]), std=np.array(
                         if l[0] < 0: continue
                         l[1], l[2], l[3], l[4] = l[1] * w, l[2] * h, l[3] * w, l[4] * h
                         rect = box_to_rect(l[1:5], color, linewidth)
-                        figs[i][j].add_patch(rect)
+                        fig.add_patch(rect)
                         if show_text:
-                            figs[i][j].text(l[1], l[2], str(int(l[0])), 
+                            fig.text(l[1], l[2], str(int(l[0])), 
                                             bbox=dict(facecolor=(1, 1, 1), alpha=0.5), fontsize=fontsize, color=(0, 0, 0))
             else:
-                figs[i][j].set_visible(False)
+                fig.set_visible(False)
     plt.show()
 
 def text_label_to_int(text_labels):
