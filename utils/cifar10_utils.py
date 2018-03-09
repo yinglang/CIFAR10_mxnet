@@ -3,6 +3,7 @@
 """
 import numpy as np
 import matplotlib.pyplot as plt
+import matplotlib
 
 def try_asnumpy(data):
     try:
@@ -12,7 +13,7 @@ def try_asnumpy(data):
     return data
 
 def show_images(images, labels=None, rgb_mean=np.array([0, 0, 0]), std=np.array([1, 1, 1]),
-                MN=None, color=(0, 1, 0), linewidth=1, figsize=(8, 4), show_text=False, fontsize=5):
+                MN=None, color=(0, 1, 0), linewidth=1, figsize=(8, 4), show_text=False, fontsize=5, xlabels=None, ylabels=None):
     """
     advise to set dpi to 120
         import matplotlib as mpl
@@ -41,8 +42,15 @@ def show_images(images, labels=None, rgb_mean=np.array([0, 0, 0]), std=np.array(
                 image = (images[N * i + j] / 255).clip(0, 1)
                 fig.imshow(image)
                 
-                fig.axes.get_xaxis().set_visible(False)
-                fig.axes.get_yaxis().set_visible(False)
+                if xlabels is not None: 
+                    fig.set_xlabel(xlabels[N * i + j], fontsize=fontsize)
+                if ylabels is not None: 
+                    fig.set_ylabel(ylabels[N * i + j], fontsize=fontsize)
+                
+                fig.set_xticks([])
+                fig.set_yticks([])
+#                 fig.axes.get_xaxis().set_visible(False)
+#                 fig.axes.get_yaxis().set_visible(False)
                 
                 if labels is not None:
                     label = labels[N * i + j]
