@@ -1,3 +1,50 @@
+"""
+    dataset
+"""
+import warnings
+from mxnet import gluon, nd, image
+import os
+
+class MarketDataset(gluon.data.dataset.Dataset):
+    def __init__(self, root, flag=1, transform=None, ignore_neg=True):
+        self._root = os.path.expanduser(root)
+        self._flag = flag
+        self._transform = transform
+        self._exts = ['.ndarray', '.jpeg', '.jpg', '.png']
+        self.items = []
+        
+        for filename in sorted(os.listdir(root)):
+            imagename = filename
+            filename = os.path.join(root, filename)
+            ext = os.path.splitext(filename)[1]
+            if ext.lower() not in self._exts:
+                warnings.warn('Ignoring %s of type %s. Only support %s'%(
+                    filename, ext, ', '.join(self._exts)))
+                continue
+            if ignore_neg and imagename.split('_')[0] == '-1': continue
+            label, cam = self._get_label_cam(imagename)
+            self.items.append((filename, label, cam))
+        
+    def _get_label_cam(self, image_name):
+        image_name_list = image_name.split('_')
+        label = int(image_name_list[0])
+        cam = int(image_name_list[1].split('s')[0][1:])
+        return label, cam
+
+    def __getitem__(self, idx):
+        filename, label, cam = self.items[idx]
+        img = image.imread(filename, flag=1)
+        if self._transform is not None:
+            img, label = self._transform(img, label)
+        return img, label, nd.array([cam])
+
+    def __len__(self):
+        return len(self.items)
+  
+#####################################################################################################################
+"""
+    evaluate
+"""
 import scipy.io
 # import torch
 import numpy as np
