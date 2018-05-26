@@ -13,7 +13,7 @@ def try_asnumpy(data):
     return data
 
 def show_images(images, labels=None, rgb_mean=np.array([0, 0, 0]), std=np.array([1, 1, 1]),
-                MN=None, color=(0, 1, 0), linewidth=1, figsize=(8, 4), show_text=False, fontsize=5, xlabels=None, ylabels=None):
+                MN=None, color=(0, 1, 0), linewidth=1, figsize=(8, 4), show_text=False, fontsize=5, xlabels=None, ylabels=None, clip=True):
     """
     advise to set dpi to 120
         import matplotlib as mpl
@@ -39,7 +39,9 @@ def show_images(images, labels=None, rgb_mean=np.array([0, 0, 0]), std=np.array(
         for j in range(N):
             fig = figs[i][j] if M > 1 else figs[j]
             if N * i + j < images.shape[0]:
-                image = (images[N * i + j] / 255).clip(0, 1)
+                image = (images[N * i + j] / 255)
+                if clip:
+                    image = image.clip(0, 1)
                 fig.imshow(image)
                 
                 if xlabels is not None: 
@@ -88,19 +90,21 @@ def show_log(filename, ignore_sharp=True):
             continue
         print line,
 
-def parse_sharp(line):
-    def find_tuple(line):
-        idx1 = line.find("(")
-        idx2 = line[idx1+1:].find(")") + idx1+1
-        w_strs = line[idx1+1:idx2].split(",")[:-1]
-        w = [0] * len(w_strs)
-        for i in range(len(w_strs)):
-            w[i] = float(w_strs[i])
-        return w, idx1, idx2
+def find_tuple(line, end=None):
+    idx1 = line.find("(")
+    idx2 = line[idx1+1:].find(")") + idx1+1
+    w_strs = line[idx1+1:idx2].split(",")
+    if end is not None:
+        w_strs = w_strs[:end]
+    w = [0] * len(w_strs)
+    for i in range(len(w_strs)):
+        w[i] = float(w_strs[i])
+    return w, idx1, idx2
     
+def parse_sharp(line):
     line  = line[1:]
     w, _, idx2 = find_tuple(line)
-    g, _, _ = find_tuple(line[idx2+1:])
+    g, _, _ = find_tuple(line[idx2+1:], -1)
     return w, g
     
 
@@ -111,10 +115,18 @@ def parse_log(log_file, begin_line=0, to_float_k=["train_acc", "valid_acc", "los
         for line in lines:
             line = line.strip()
             if line[0:1] == "#": 
-                w, g = parse_sharp(line)
-                if len(w) > 0 and len(g) > 0:
-                    obj['weight'].append(w)
-                    obj['grad'].append(g)
+                if line[2:13] == 'epoch_round': pass
+                elif line[:6] == "#     ":
+                    k, v = line[6:].split(":")
+                    k = k.strip()
+                    if obj.has_key("b"+k): obj["b"+k].append(find_tuple(v)[0])
+                    else: obj["b"+k] = [find_tuple(v)[0]]
+                else:
+                    w, g = parse_sharp(line)
+                    print w, g
+                    if len(w) > 0 and len(g) > 0:
+                        obj['weight'].append(w)
+                        obj['grad'].append(g)
                 continue
             vs = []
             for d in line.split(","):
@@ -181,7 +193,7 @@ def update(log_file, x_range=None):
     plt.subplot(1, 2, 2)
     plot(data, 'loss', x_range)
     plt.show()
-    print "lr", sorted(to_float(set(data['lr'])), reverse=True)
+    #print "lr", sorted(to_float(set(data['lr'])), reverse=True)
     
     # weight and grad
     data = dataset[log_file]["weight"]
